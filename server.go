@@ -10,6 +10,9 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+type Product struct {
+	Product_name string `json:"product_name" validate:"required,min=4"`
+}
 type ProductValidator struct {
 	validator *validator.Validate
 }
@@ -22,16 +25,40 @@ func main() {
 	market := []map[int]string{{1: "tvs"}, {2: "smartphones"}, {3: "iphones"}}
 	e := echo.New()
 	v := validator.New()
+	e.Validator = &ProductValidator{validator: v}
 	port := os.Getenv("MY_APP_PORT")
 	if port == "" {
 		port = "8080"
 	}
-	e.POST("/products", func(c echo.Context) error {
-		type Product struct {
-			Product_name string `json:"product_name" validate:"required,min=4"`
+	e.PUT("/products/:id", func(c echo.Context) error {
+		var (
+			product map[int]string
+			temp    Product
+		)
+		pid, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return err
 		}
+		for _, p := range market {
+			for index, _ := range p {
+				if index == pid {
+					product = p
+				}
+			}
+		}
+		if err := c.Bind(&temp); err != nil {
+			return err
+		}
+		if err := c.Validate(&temp); err != nil {
+			return err
+		}
+		product[pid] = temp.Product_name
+		return c.JSON(http.StatusOK, market)
+
+	})
+	e.POST("/products", func(c echo.Context) error {
 		var temp Product
-		e.Validator = &ProductValidator{validator: v}
+
 		if err := c.Bind(&temp); err != nil {
 			return err
 		}
