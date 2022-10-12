@@ -10,6 +10,14 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+type ProductValidator struct {
+	validator *validator.Validate
+}
+
+func (p *ProductValidator) Validate(i interface{}) error {
+	return p.validator.Struct(i)
+}
+
 func main() {
 	market := []map[int]string{{1: "tvs"}, {2: "smartphones"}, {3: "iphones"}}
 	e := echo.New()
@@ -23,12 +31,14 @@ func main() {
 			Product_name string `json:"product_name" validate:"required,min=4"`
 		}
 		var temp Product
+		e.Validator = &ProductValidator{validator: v}
 		if err := c.Bind(&temp); err != nil {
 			return err
 		}
-		if err := v.Struct(temp); err != nil {
+		if err := c.Validate(temp); err != nil {
 			return err
 		}
+
 		newProduct := map[int]string{
 			len(market) + 1: temp.Product_name,
 		}
