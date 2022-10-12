@@ -31,25 +31,14 @@ func main() {
 		port = "8080"
 	}
 	e.DELETE("/products/:id", func(c echo.Context) error {
-		var newMarket []map[int]string
+
 		pid, err := strconv.Atoi(c.Param("id"))
+		pid--
 		if err != nil {
 			return err
 		}
-		for _, p := range market {
-			for index, _ := range p {
-				if index == pid {
-					continue
-				}
-				newMarket = append(newMarket, p)
-			}
-		}
-		if len(newMarket) == len(market) {
-			return c.JSON(http.StatusNotFound, "No such element")
-		}
-		market = newMarket
+		market = append(market[:pid], market[pid+1:]...)
 		return c.JSON(http.StatusOK, market)
-
 	})
 	e.PUT("/products/:id", func(c echo.Context) error {
 		var (
