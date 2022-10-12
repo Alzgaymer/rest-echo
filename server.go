@@ -40,7 +40,7 @@ func main() {
 			return err
 		}
 		for _, p := range market {
-			for index, _ := range p {
+			for index := range p {
 				if index == pid {
 					product = p
 				}
