@@ -16,7 +16,6 @@ var log = e.Logger
 var cfg = config.GetConfig()
 
 func init() {
-
 	err := cleanenv.ReadEnv(cfg)
 	e.Logger.Printf("%+v", cfg)
 	if err != nil {
