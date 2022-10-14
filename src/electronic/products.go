@@ -57,7 +57,6 @@ func PutByID(c echo.Context) error {
 	}
 	product[pid] = temp.Product_name
 	return c.JSON(http.StatusOK, market)
-
 }
 
 func PostAdd(c echo.Context) error {
