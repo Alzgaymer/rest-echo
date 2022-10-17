@@ -2,6 +2,9 @@
 ## explicit; go 1.16
 github.com/BurntSushi/toml
 github.com/BurntSushi/toml/internal
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+## explicit
+github.com/dgrijalva/jwt-go
 # github.com/go-playground/locales v0.14.0
 ## explicit; go 1.13
 github.com/go-playground/locales
@@ -18,10 +21,13 @@ github.com/joho/godotenv
 # github.com/labstack/echo v3.3.10+incompatible
 ## explicit
 github.com/labstack/echo
+github.com/labstack/echo/middleware
 # github.com/labstack/gommon v0.4.0
 ## explicit; go 1.12
+github.com/labstack/gommon/bytes
 github.com/labstack/gommon/color
 github.com/labstack/gommon/log
+github.com/labstack/gommon/random
 # github.com/leodido/go-urn v1.2.1
 ## explicit; go 1.13
 github.com/leodido/go-urn

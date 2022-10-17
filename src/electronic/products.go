@@ -1,6 +1,7 @@
 package electronic
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -98,4 +99,17 @@ func GetByID(c echo.Context) error {
 
 func GetAll(c echo.Context) error {
 	return c.JSON(http.StatusNotFound, market)
+}
+
+func AnotherServerMessage(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		fmt.Println("[1]: inside middleware")
+		return next(ctx)
+	}
+}
+func ServerMessage(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		fmt.Println("[2]: inside middleware")
+		return next(ctx)
+	}
 }

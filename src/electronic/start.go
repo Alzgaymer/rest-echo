@@ -7,6 +7,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -26,6 +27,9 @@ func init() {
 func Start() {
 
 	e.Validator = &ProductValidator{validator: v}
+
+	e.Use(ServerMessage)
+	e.Pre(AnotherServerMessage, middleware.RemoveTrailingSlash()) //always works before Use method
 
 	e.DELETE("/products/:id", DeleteByID)
 	e.PUT("/products/:id", PutByID)
