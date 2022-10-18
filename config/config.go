@@ -8,8 +8,8 @@ type ConfigDatabase struct {
 	LogLvl  string `env:"LOG_LEVEL" env-default:"ERROR"`
 }
 
-var ConfigDB ConfigDatabase
+var configDB ConfigDatabase
 
 func GetConfig() *ConfigDatabase {
-	return &ConfigDB
+	return &configDB
 }
