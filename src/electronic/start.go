@@ -3,6 +3,7 @@ package electronic
 import (
 	"fmt"
 	"server/config"
+	service "server/src/service"
 
 	"github.com/ilyakaznacheev/cleanenv"
 
@@ -17,6 +18,10 @@ var log = e.Logger
 var cfg = config.GetConfig()
 
 func init() {
+
+	service := service.New()
+	service.SetURI(cfg.MongoURI)
+
 	err := cleanenv.ReadEnv(cfg)
 	e.Logger.Printf("%+v", cfg)
 	if err != nil {
