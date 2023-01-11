@@ -26,6 +26,7 @@ func init() {
 
 	service := service.New()
 	service.SetURI(cfg.MongoURI)
+
 }
 
 func Start() {
