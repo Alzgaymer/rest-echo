@@ -18,15 +18,14 @@ var log = e.Logger
 var cfg = config.GetConfig()
 
 func init() {
-
-	service := service.New()
-	service.SetURI(cfg.MongoURI)
-
 	err := cleanenv.ReadEnv(cfg)
 	e.Logger.Printf("%+v", cfg)
 	if err != nil {
 		log.Fatal("Unable to load configurations")
 	}
+
+	service := service.New()
+	service.SetURI(cfg.MongoURI)
 }
 
 func Start() {
@@ -37,7 +36,7 @@ func Start() {
 	e.Pre(AnotherServerMessage, middleware.RemoveTrailingSlash()) //always works before Use method
 
 	e.DELETE("/products/:id", DeleteByID)
-	e.PUT("/products/:id", PutByID)
+	e.PUT("/products/:name", PutByName)
 	e.POST("/products", PostAdd)
 	e.GET("/", GetInit)
 	e.GET("/products/:id", GetByID)

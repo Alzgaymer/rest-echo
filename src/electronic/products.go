@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"server/src/model"
-	"strconv"
+	service "server/src/service"
 
 	"github.com/labstack/echo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -21,18 +22,35 @@ func (p *ProductValidator) Validate(i interface{}) error {
 var market []*model.Product
 
 func DeleteByID(c echo.Context) error {
-
-	pid, err := strconv.Atoi(c.Param("id"))
-	pid--
-	if err != nil {
-		return err
-	}
-	market = append(market[:pid], market[pid+1:]...)
-	return c.JSON(http.StatusOK, market)
+	return c.JSON(http.StatusOK, "")
 }
 
-func PutByID(c echo.Context) error {
-	return c.JSON(http.StatusOK, "")
+func PutByName(c echo.Context) error {
+
+	var (
+		product model.Product
+	)
+
+	product.Product_name = c.Param("name")
+	product.ID = primitive.NewObjectID()
+	product.CreationTime = product.ID.Timestamp()
+
+	if err := c.Bind(&product); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := c.Validate(&product); err != nil {
+		log.Fatal(err)
+	}
+
+	service := service.New()
+
+	service.Collection = append(service.Collection, &product)
+	res := service.InsertOne(c.Request().Context(), product)
+
+	log.Print(res)
+
+	return c.JSON(http.StatusOK, service.Collection)
 }
 
 func PostAdd(c echo.Context) error {

@@ -12,14 +12,14 @@ import (
 
 type Service struct {
 	mongodb.Mongodb
-	logger *log.Logger
-	arr    []*model.Product
+	logger     *log.Logger
+	Collection []*model.Product
 }
 
 var service Service
 
 func init() {
-	service.arr = make([]*model.Product, 0)
+	service.Collection = make([]*model.Product, 0)
 }
 
 func New() *Service {
@@ -37,16 +37,33 @@ func (s Service) SetURI(str string) {
 		s.logger.Fatal(err)
 	}
 }
-func (s Service) Connect(ctx context.Context) {
+func (s Service) Connect(ctx context.Context, dbName string) {
 	err := s.MongoClient.Connect(ctx)
 	if err != nil {
 		s.logger.Fatal(err)
 	}
+	s.DB = s.MongoClient.Database(dbName)
 }
 
-func (s Service) GetCollection(name string, options options.CollectionOptions) mongo.Collection {
+func (s Service) GetCollection(name string) *mongo.Collection {
 	if s.Collection == nil {
-		s.Collection = s.DB.Collection(name, &options)
+		s.Mongodb.Collection = s.DB.Collection(name)
 	}
-	return *s.Collection
+	return s.Mongodb.Collection
+}
+
+func (s Service) InsertMany(ctx context.Context, products ...interface{}) *mongo.InsertManyResult {
+	result, err := s.Mongodb.Collection.InsertMany(ctx, products)
+	if err != nil {
+		s.logger.Fatal(err)
+	}
+	return result
+}
+
+func (s Service) InsertOne(ctx context.Context, product interface{}) *mongo.InsertOneResult {
+	result, err := s.Mongodb.Collection.InsertOne(ctx, product)
+	if err != nil {
+		s.logger.Fatal(err)
+	}
+	return result
 }
