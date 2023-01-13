@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	mongodb "server/src/db/mongo"
-	"server/src/model"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -12,14 +11,13 @@ import (
 
 type Service struct {
 	mongodb.Mongodb
-	logger     *log.Logger
-	Collection []*model.Product
+	logger *log.Logger
 }
 
 var service Service
 
 func init() {
-	service.Collection = make([]*model.Product, 0)
+
 }
 
 func New() *Service {

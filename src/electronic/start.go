@@ -1,8 +1,10 @@
 package electronic
 
 import (
+	"context"
 	"fmt"
 	"server/config"
+	builder "server/src/builder"
 	service "server/src/service"
 
 	"github.com/ilyakaznacheev/cleanenv"
@@ -12,10 +14,12 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-var e = echo.New()
-var v = validator.New()
-var log = e.Logger
-var cfg = config.GetConfig()
+var (
+	e   = echo.New()
+	v   = validator.New()
+	log = e.Logger
+	cfg = config.GetConfig()
+)
 
 func init() {
 	err := cleanenv.ReadEnv(cfg)
@@ -25,12 +29,15 @@ func init() {
 	}
 
 	service := service.New()
-	service.SetURI(cfg.MongoURI)
+	var MongoBuilder builder.MongoBuilder = builder.MongoBuilder{Service: service, Config: cfg}
+	MongoBuilder.Build()
 
 }
 
 func Start() {
 
+	ctx := context.Background()
+	defer service.New().DB.Client().Disconnect(ctx)
 	e.Validator = &ProductValidator{validator: v}
 
 	e.Use(ServerMessage)
@@ -40,9 +47,10 @@ func Start() {
 	e.PUT("/products/:name", PutByName)
 	e.POST("/products", PostAdd)
 	e.GET("/", GetInit)
-	e.GET("/products/:id", GetByID)
+	e.GET("/products/:name", GetByID)
 	e.GET("/products", GetAll)
 
 	log.Printf("Listening on port :%s...", cfg.Port)
 	log.Fatal(e.Start(fmt.Sprintf(":%s", cfg.Port)))
+
 }

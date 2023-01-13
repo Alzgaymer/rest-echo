@@ -7,6 +7,7 @@ import (
 	service "server/src/service"
 
 	"github.com/labstack/echo"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -42,15 +43,16 @@ func PutByName(c echo.Context) error {
 	if err := c.Validate(&product); err != nil {
 		log.Fatal(err)
 	}
-
+	c.Logger().Printf("PutByName function: product: %v", product)
 	service := service.New()
 
-	service.Collection = append(service.Collection, &product)
-	res := service.InsertOne(c.Request().Context(), product)
+	res := service.InsertOne(c.Request().Context(), bson.D{
+		{Key: product.Product_name, Value: product},
+	})
 
 	log.Print(res)
 
-	return c.JSON(http.StatusOK, service.Collection)
+	return c.JSON(http.StatusOK, product)
 }
 
 func PostAdd(c echo.Context) error {
@@ -63,7 +65,31 @@ func GetInit(c echo.Context) error {
 
 func GetByID(c echo.Context) error {
 
-	return c.JSON(http.StatusNotFound, "Product Not Found")
+	var (
+		product model.Product
+	)
+
+	product.Product_name = c.Param("name")
+	product.ID = primitive.NewObjectID()
+	product.CreationTime = product.ID.Timestamp()
+
+	if err := c.Bind(&product); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := c.Validate(&product); err != nil {
+		log.Fatal(err)
+	}
+	c.Logger().Printf("PutByName function: product: %v", product)
+	service := service.New()
+
+	res := service.InsertOne(c.Request().Context(), bson.D{
+		{Key: product.Product_name, Value: product},
+	})
+
+	log.Print(res)
+
+	return c.JSON(http.StatusOK, product)
 }
 
 func GetAll(c echo.Context) error {
