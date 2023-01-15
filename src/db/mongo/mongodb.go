@@ -9,18 +9,14 @@ const (
 	_default_collection = "item-collction"
 )
 
-type DB interface {
-	New(client *mongo.Client) *Database
-	Col() *mongo.Collection
-}
 type Database struct {
-	db *mongo.Database
+	Db *mongo.Database
 }
 
-func New(client *mongo.Client) *Database {
-	return &Database{db: client.Database(_default_db)}
+func New(client *mongo.Client) *mongo.Database {
+	return client.Database(_default_db)
 }
 
 func (d *Database) Col() *mongo.Collection {
-	return d.db.Collection(_default_collection)
+	return d.Db.Collection(_default_collection)
 }
