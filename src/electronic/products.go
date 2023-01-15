@@ -24,6 +24,12 @@ func DeleteByID(c echo.Context) error {
 }
 
 func PutByName(c echo.Context) error {
+	//find in cache (in our situation market []*model.Product)
+	//if success skip adding to mongo
+	//if failed find in mongo
+	//if success skip adding
+	//if failed add to mongo
+	//adding
 
 	return c.JSON(http.StatusOK, "")
 }

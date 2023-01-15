@@ -1,7 +1,6 @@
 package electronic
 
 import (
-	"context"
 	"fmt"
 	"server/config"
 	builder "server/src/builder"
@@ -29,15 +28,12 @@ func init() {
 	}
 
 	service := service.New()
-	var MongoBuilder builder.MongoBuilder = builder.MongoBuilder{Service: service, Config: cfg}
+	MongoBuilder := builder.MongoBuilder{Service: service, Config: cfg}
 	MongoBuilder.Build()
 
 }
 
 func Start() {
-
-	ctx := context.Background()
-	defer service.New().DB.Client().Disconnect(ctx)
 	e.Validator = &ProductValidator{validator: v}
 
 	e.Use(ServerMessage)
