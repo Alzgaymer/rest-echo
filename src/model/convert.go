@@ -1,6 +1,11 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson"
+import (
+	"log"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 func MgoToModel(mgo *mgoProduct) *Product {
 	return &Product{
@@ -24,4 +29,24 @@ func MgoToBson(mgo *mgoProduct) *bson.D {
 		{Key: "product_name", Value: mgo.Product_name},
 		{Key: "creation_time", Value: mgo.CreationTime},
 	}
+}
+
+func Decode(res *mongo.SingleResult) *Product {
+	var (
+		err         error
+		bsonproduct bson.M
+		mgoproduct  mgoProduct
+	)
+	res.Decode(&bsonproduct)
+	if err != nil {
+		log.Print(err)
+		return nil
+	}
+	bsonbytes, err := bson.Marshal(bsonproduct)
+	if err != nil {
+		log.Print(err)
+		return nil
+	}
+	bson.Unmarshal(bsonbytes, &mgoproduct)
+	return MgoToModel(&mgoproduct)
 }
