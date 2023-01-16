@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	_default_db         = "rest-echo-mongo"
-	_default_collection = "item-collction"
+	_default_db         = "rest-echo"
+	_default_collection = "item-collection"
 )
 
 type Database struct {
