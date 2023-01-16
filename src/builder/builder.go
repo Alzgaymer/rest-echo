@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"context"
 	"log"
 	"server/config"
 	mongodb "server/src/db/mongo"
@@ -20,5 +21,6 @@ func (m MongoBuilder) Build() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	client.Connect(context.Background())
 	m.Service.Db = mongodb.New(client)
 }
