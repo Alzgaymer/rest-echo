@@ -22,6 +22,10 @@ func New() *Service {
 
 // }
 
+// func (s Service) Find(ctx context.Context, item model.Product) (*mongo.Cursor, error) {
+// 	return s.Database.Col().Find(ctx, model.MgoToBson(model.ModelToMgo(&item)))
+// }
+
 func (s Service) Disconnect(ctx context.Context) {
 	log.Printf("Disconnecting from mongo...")
 	err := s.Db.Client().Disconnect(ctx)
