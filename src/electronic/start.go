@@ -22,13 +22,17 @@ var (
 
 func init() {
 	err := cleanenv.ReadEnv(cfg)
-	e.Logger.Printf("%+v", cfg)
+	log.Printf("%+v", cfg)
 	if err != nil {
 		log.Fatal("Unable to load configurations")
 	}
 
 	service := service.New()
-	MongoBuilder := builder.MongoBuilder{Service: service, Config: cfg}
+	MongoBuilder := builder.MongoBuilder{
+		Service: service,
+		Config:  cfg,
+		Log:     log,
+	}
 	MongoBuilder.Build()
 
 }
