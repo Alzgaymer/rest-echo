@@ -7,6 +7,7 @@ import (
 	"server/src/model"
 	"server/src/service"
 	"sync"
+	"time"
 
 	"github.com/labstack/echo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,7 +53,7 @@ func PostAdd(c echo.Context) error {
 		return err
 	}
 	product.ID = primitive.NewObjectID()
-	product.CreationTime = product.ID.Timestamp()
+	product.CreationTime = product.ID.Timestamp().Add(2 * time.Hour)
 
 	filter = bson.M{"product_name": product.Product_name}
 
