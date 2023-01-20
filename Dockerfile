@@ -1,12 +1,3 @@
-# Start with the official MongoDB image
-FROM mongo:latest
-
-# Expose the MongoDB port
-EXPOSE 27017
-
-# Start MongoDB as the entrypoint
-ENTRYPOINT ["mongod"]
-
 # Start the Go app in a new container
 FROM golang:latest
 
@@ -16,6 +7,9 @@ WORKDIR /go/src/app
 # Copy the source files
 COPY . .
 
+#install mod dependensies
+RUN go install
+
 # Build the Go app
 RUN go build -o main .
 
@@ -23,7 +17,7 @@ RUN go build -o main .
 EXPOSE 8080
 
 # Connect to the MongoDB container
-ENV MONGO_URL=mongodb://mongo:27017
+ENV MONGO_URI=mongodb://mongo:27017
 
 # Run the binary
 CMD ["./main"]
