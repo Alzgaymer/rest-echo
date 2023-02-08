@@ -43,7 +43,7 @@ func PostAdd(c echo.Context) error {
 	var (
 		product model.Product
 		filter  bson.M
-		log     echo.Logger = c.Logger()
+		log     = c.Logger()
 	)
 
 	if err := c.Bind(&product); err != nil {
@@ -74,14 +74,14 @@ func PostAdd(c echo.Context) error {
 	} else {
 		str := fmt.Sprintf("Product: %v, already exist", product)
 		log.Printf(str)
-		return c.JSON(http.StatusOK, str)
+		return c.JSON(http.StatusFound, str)
 	}
 
 	return c.JSON(http.StatusOK, product)
 }
 
 func GetInit(c echo.Context) error {
-	return c.String(http.StatusOK, "ECHO INIT!")
+	return c.HTML(http.StatusOK, "<h1>ECHO INIT</h1>")
 }
 
 func GetByID(c echo.Context) error {
@@ -89,7 +89,42 @@ func GetByID(c echo.Context) error {
 }
 
 func GetAll(c echo.Context) error {
-	return c.JSON(http.StatusNotFound, "")
+	lock.Lock()
+	defer lock.Unlock()
+
+	var (
+		products []*model.Product
+		ctx      = c.Request().Context()
+	)
+	cur, err := service.New().Col().Find(ctx, bson.D{})
+	if err != nil {
+		c.Logger().Info(err)
+	}
+	defer cur.Close(ctx)
+
+	for cur.Next(ctx) {
+		var (
+			bytes   []byte
+			m       bson.M
+			product = &model.MgoProduct{}
+		)
+
+		if err = cur.Decode(&m); err != nil {
+			return err
+		}
+
+		if bytes, err = bson.Marshal(m); err != nil {
+			return err
+		}
+
+		if err = bson.Unmarshal(bytes, product); err != nil {
+			return err
+		}
+
+		products = append(products, model.MgoToModel(product))
+	}
+
+	return c.JSON(http.StatusOK, products)
 }
 
 func AnotherServerMessage(next echo.HandlerFunc) echo.HandlerFunc {
