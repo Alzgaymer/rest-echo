@@ -33,9 +33,9 @@ func init() {
 		e.Logger.Fatal("Unable to load configurations")
 	}
 
-	service := service.New()
+	s := service.New()
 	MongoBuilder := builder.MongoBuilder{
-		Service: service,
+		Service: s,
 		Config:  cfg,
 		Log:     e.Logger,
 	}
@@ -49,11 +49,11 @@ func Start() {
 	e.Use(ServerMessage)
 	e.Pre(AnotherServerMessage, middleware.RemoveTrailingSlash()) //always works before Use method
 
-	e.DELETE("/products/:id", DeleteByID)
-	e.PUT("/products/:name", PutByName)
-	e.POST("/products", PostAdd)
+	e.DELETE("/product/:id", DeleteByID)
+	e.PUT("/product/:name", PutByName)
+	e.POST("/product", PostAdd)
 	e.GET("/", GetInit)
-	e.GET("/products/:name", GetByID)
+	e.GET("/product/:name", GetByID)
 	e.GET("/products", GetAll)
 
 	go func() {
