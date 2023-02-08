@@ -10,7 +10,7 @@ import (
 func MgoToModel(mgo *MgoProduct) *Product {
 	return &Product{
 		ID:           mgo.ID,
-		Product_name: mgo.Product_name,
+		ProductName:  mgo.ProductName,
 		CreationTime: mgo.CreationTime,
 	}
 }
@@ -18,15 +18,15 @@ func MgoToModel(mgo *MgoProduct) *Product {
 func ModelToMgo(mgo *Product) *MgoProduct {
 	return &MgoProduct{
 		ID:           mgo.ID,
-		Product_name: mgo.Product_name,
+		ProductName:  mgo.ProductName,
 		CreationTime: mgo.CreationTime,
 	}
 }
 
-func MgoToBson(mgo *MgoProduct) *bson.D {
+func MgoToBsonD(mgo *MgoProduct) *bson.D {
 	return &bson.D{
 		{Key: "_id", Value: mgo.ID},
-		{Key: "product_name", Value: mgo.Product_name},
+		{Key: "product_name", Value: mgo.ProductName},
 		{Key: "creation_time", Value: mgo.CreationTime},
 	}
 }
