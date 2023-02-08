@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func MgoToModel(mgo *mgoProduct) *Product {
+func MgoToModel(mgo *MgoProduct) *Product {
 	return &Product{
 		ID:           mgo.ID,
 		Product_name: mgo.Product_name,
@@ -15,15 +15,15 @@ func MgoToModel(mgo *mgoProduct) *Product {
 	}
 }
 
-func ModelToMgo(mgo *Product) *mgoProduct {
-	return &mgoProduct{
+func ModelToMgo(mgo *Product) *MgoProduct {
+	return &MgoProduct{
 		ID:           mgo.ID,
 		Product_name: mgo.Product_name,
 		CreationTime: mgo.CreationTime,
 	}
 }
 
-func MgoToBson(mgo *mgoProduct) *bson.D {
+func MgoToBson(mgo *MgoProduct) *bson.D {
 	return &bson.D{
 		{Key: "_id", Value: mgo.ID},
 		{Key: "product_name", Value: mgo.Product_name},
@@ -33,11 +33,10 @@ func MgoToBson(mgo *mgoProduct) *bson.D {
 
 func Decode(res *mongo.SingleResult) *Product {
 	var (
-		err         error
 		bsonproduct bson.M
-		mgoproduct  mgoProduct
+		mgoproduct  MgoProduct
 	)
-	res.Decode(&bsonproduct)
+	err := res.Decode(&bsonproduct)
 	if err != nil {
 		log.Print(err)
 		return nil
@@ -47,6 +46,9 @@ func Decode(res *mongo.SingleResult) *Product {
 		log.Print(err)
 		return nil
 	}
-	bson.Unmarshal(bsonbytes, &mgoproduct)
+	err = bson.Unmarshal(bsonbytes, &mgoproduct)
+	if err != nil {
+		return nil
+	}
 	return MgoToModel(&mgoproduct)
 }
